@@ -82,20 +82,30 @@
         }
         input:focus, select:focus { border-color: var(--accent-primary); background: white; }
         
-        .btn-lucky { 
-            background: linear-gradient(135deg, var(--accent-primary) 0%, #ff6b81 100%);
-            color: white; 
-            border: none;
+        button {
             padding: 15px;
             border-radius: 12px;
             font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
             transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+        }
+
+        .btn-generate {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+        .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); }
+
+        .btn-lucky { 
+            background: linear-gradient(135deg, var(--accent-primary) 0%, #ff6b81 100%);
+            color: white; 
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
         }
         .btn-lucky:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 71, 87, 0.4); }
-        .btn-lucky:active { transform: translateY(0); }
+        button:active { transform: translateY(0); }
 
         /* Right Side Display Stack */
         .display-stack {
@@ -263,14 +273,15 @@
             </select>
         </div>
 
-        <button class="btn-lucky" id="luckyBtn">🎲 Create Card & Stack It!</button>
+        <button class="btn-generate" id="generateBtn">🔨 Generate Custom Card</button>
+        <button class="btn-lucky" id="luckyBtn">🎲 I'm Feeling Lucky</button>
     </div>
 
     <!-- Right Side Dynamic Card Stack -->
     <div class="display-stack">
         <div class="stack-title">Your Generated Card History</div>
         <div id="emptyState" class="empty-state">
-            Fill out the details on the left and tap the button to stack your first card here!
+            Fill out the details on the left and tap either button to stack your first card here!
         </div>
         <div id="cardContainer" style="display: flex; flex-direction: column; gap: 30px;"></div>
     </div>
@@ -281,51 +292,103 @@
     const ageInput = document.getElementById('ageInput');
     const relationSelect = document.getElementById('relationSelect');
     const hobbySelect = document.getElementById('hobbySelect');
-    const luckyBtn = document.getElementById('luckyBtn');
-    const cardContainer = document.getElementById('cardContainer');
-    const emptyState = document.getElementById('emptyState');
 
-    // Fun messages map sorted dynamically by hobby
-    const messagePools = {
-        gaming: [
-            "Happy [AGE]th Birthday to my favorite [RELATION]! May your day be filled with zero lag, epic loot drops, and high scores. You're officially leveling up today!",
-            "Level [AGE] unlocked! To an incredible [RELATION]: hope your day has maximum power-ups and absolutely no boss fights. Have a legendary birthday!"],
-        reading: ["Happy [AGE]th Birthday to a wonderful [RELATION]! May your next chapter be the absolute best one yet, complete with cozy reading corners and no plot twists.",
-                  "Wishing an amazing [RELATION] a beautiful [AGE]th birthday! Here's to more books, endless coffee, and chapters full of pure joy."],
-        traveling: ["Happy [AGE]th Birthday to my favorite globetrotting [RELATION]! May your new year around the sun bring empty airport lines, window seats, and wild adventures.",
-                    "To a phenomenal [RELATION] on your [AGE]th birthday! Keep filling your passport and chasing beautiful horizons. Enjoy your special day!"],
-        cooking: ["Happy [AGE]th Birthday to the most talented [RELATION]! May your day be seasoned with laughter, paired with sweet moments, and served with a lot of cake.",
-                  "Wishing a delicious [AGE]th birthday to an incredible [RELATION]! Here's to cooking up amazing memories and savoring every single minute of this year."],
-        fitness: ["Happy [AGE]th Birthday to my high-energy [RELATION]! Crushing life at [AGE] look easy. May your day be filled with personal records and macro-friendly cake!",
-                  "To an unstoppable [RELATION] on your [AGE]th birthday! Keep lifting spirits and chasing goals. Sending you strongest wishes today!"],
-        music: ["Happy [AGE]th Birthday to an extraordinary [RELATION]! May the soundtrack of your [AGE]s be filled with beautiful melodies, good vibes, and front-row experiences.",
-                "Wishing a rockin' [AGE]th birthday to my favorite [RELATION]! Keep living life out loud and matching your own beat."]
-    };
-    function generateCard() {
-        // Fallbacks
-        const name = nameInput.value.trim() || "Legend";
-        const age = ageInput.value.trim() || "21";
-        const relation = relationSelect.value.toLowerCase();
-        const hobby = hobbySelect.value;
-        // Choose random message variant based on selected hobbyconst templates = messagePools[hobby];
-        let randomTemplate = templates[Math.floor(Math.random() * templates.length)];
-        // Process message variableslet dynamicMessage = randomTemplate.replace("[AGE]", age).replace("[RELATION]", relation);
-        // Hide Empty State NoticeemptyState.style.display = 'none';
-        // Unique ID for cloning capture referenceconst cardId = 'card-' + Date.now();
-        // Create elements structures matching the "inside design layout"const cardWrapper = document.createElement('div');cardWrapper.className = 'card-wrapper';
-        cardWrapper.id = cardId;cardWrapper.innerHTML = <div class="card-inside"> <div class="card-header-festive">🎉 Happy Birthday! 🎈</div> <div class="card-body-festive">"${dynamicMessage}"</div> <div class="card-footer-festive">— Cheers, Your Favorite App To: ${name}</div> </div> <div class="card-actions"> <button class="btn-action" onclick="triggerSingleConfetti()">✨ Blast</button> <button class="btn-action btn-download" onclick="downloadSingleCard('${cardId}')">💾 Save Image</button> </div>;
-            // Prepend logic stack changes: Pushes newest items straight to the top of listcard
-        Container.insertBefore(cardWrapper, cardContainer.firstChild);
-        // Global Confetti 
-        BursttriggerGlobalConfetti();}
-        function triggerGlobalConfetti() {confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#ff4757', '#ffa502', '#2ed573', '#1e90ff'] });}
-        function triggerSingleConfetti() {confetti({ particleCount: 40, spread: 40, origin: { y: 0.8 } });
-    }
-        function downloadSingleCard(id) 
-        {// Target only the inside visual segment rather than full UI action 
-        container rowconst targetNode = document.querySelector(#${id} .card-inside);
-        html2canvas(targetNode, {scale: 2,backgroundColor: '#fffdf6'}).then(canvas => {const link = document.createElement('a');
-        link.download = inside-birthday-card-${id}.png;
-        link.href = canvas.toDataURL();
-        link.click();});}
-        luckyBtn.addEventListener('click', generateCard);
+const generateBtn = document.getElementById('generateBtn');
+const luckyBtn = document.getElementById('luckyBtn');
+const cardContainer = document.getElementById('cardContainer');
+const emptyState = document.getElementById('emptyState');
+// "I'm Feeling Lucky" Datapools
+const luckyNames = ["Alex", "Jordan", "Taylor", "Sam", "Chris", "Morgan"];
+const luckyAges = ["21", "25", "30", "35", "40", "50"];
+const luckyRelations = ["Friend", "Best Friend", "Sibling", "Parent", "Partner", "Coworker"];
+const luckyHobbies = ["gaming", "reading", "traveling", "cooking", "fitness", "music"];
+// Fun messages map sorted dynamically by hobby
+const messagePools = {
+gaming: [
+"Happy [AGE]th Birthday to my favorite [RELATION]! May your day be filled with zero lag, epic loot drops, and high scores. You're officially leveling up today!",
+"Level [AGE] unlocked! To an incredible [RELATION]: hope your day has maximum power-ups and absolutely no boss fights. Have a legendary birthday!"
+],
+reading: [
+"Happy [AGE]th Birthday to a wonderful [RELATION]! May your next chapter be the absolute best one yet, complete with cozy reading corners and no plot twists.",
+"Wishing an amazing [RELATION] a beautiful [AGE]th birthday! Here's to more books, endless coffee, and chapters full of pure joy."
+],
+traveling: [
+"Happy [AGE]th Birthday to my favorite globetrotting [RELATION]! May your new year around the sun bring empty airport lines, window seats, and wild adventures.",
+"To a phenomenal [RELATION] on your [AGE]th birthday! Keep filling your passport and chasing beautiful horizons. Enjoy your special day!"
+],
+cooking: [
+"Happy [AGE]th Birthday to the most talented [RELATION]! May your day be seasoned with laughter, paired with sweet moments, and served with a lot of cake.",
+"Wishing a delicious [AGE]th birthday to an incredible [RELATION]! Here's to cooking up amazing memories and savoring every single minute of this year."
+],
+fitness: [
+"Happy [AGE]th Birthday to my high-energy [RELATION]! Crushing life at [AGE] looks easy. May your day be filled with personal records and macro-friendly cake!",
+"To an unstoppable [RELATION] on your [AGE]th birthday! Keep lifting spirits and chasing goals. Sending you strongest wishes today!"
+],
+music: [
+"Happy [AGE]th Birthday to an extraordinary [RELATION]! May the soundtrack of your [AGE]s be filled with beautiful melodies, good vibes, and front-row experiences.",
+"Wishing a rockin' [AGE]th birthday to my favorite [RELATION]! Keep living life out loud and matching your own beat."
+]
+};
+function createCard(name, age, relation, hobby) {
+// Choose random message variant based on selected hobby
+const templates = messagePools[hobby];
+let randomTemplate = templates[Math.floor(Math.random() * templates.length)];
+// Process message variables
+let dynamicMessage = randomTemplate
+.replace("[AGE]", age)
+.replace("[RELATION]", relation.toLowerCase());
+// Hide Empty State Notice
+emptyState.style.display = 'none';
+// Unique ID for cloning capture reference
+const cardId = 'card-' + Date.now();
+// Create element structure
+const cardWrapper = document.createElement('div');
+cardWrapper.className = 'card-wrapper';
+cardWrapper.id = cardId;
+cardWrapper.innerHTML = <div class="card-inside"> <div class="card-header-festive">🎉 Happy Birthday! 🎈</div> <div class="card-body-festive">"${dynamicMessage}"</div> <div class="card-footer-festive">— For my ${relation}, ${name}</div> </div> <div class="card-actions"> <button class="btn-action" onclick="triggerSingleConfetti()">✨ Blast</button> <button class="btn-action btn-download" onclick="downloadSingleCard('${cardId}')">💾 Save Image</button> </div>;
+// Pushes newest items straight to the top of the list
+cardContainer.insertBefore(cardWrapper, cardContainer.firstChild);
+// Global Confetti Burst
+triggerGlobalConfetti();
+}
+function triggerGlobalConfetti() {
+confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#ff4757', '#ffa502', '#2ed573', '#1e90ff'] });
+}
+// Attached globally so inline HTML onclick handlers can find it
+window.triggerSingleConfetti = function() {
+confetti({ particleCount: 40, spread: 40, origin: { y: 0.8 } });
+}
+window.downloadSingleCard = function(id) {
+const targetNode = document.querySelector(#${id} .card-inside);
+html2canvas(targetNode, {
+scale: 2,
+backgroundColor: '#fffdf6'
+}).then(canvas => {
+const link = document.createElement('a');
+link.download = inside-birthday-card-${id}.png;
+link.href = canvas.toDataURL();
+link.click();
+});
+}
+// Normal Form Generation Logic
+generateBtn.addEventListener('click', () => {
+const name = nameInput.value.trim() || "Legend";
+const age = ageInput.value.trim() || "21";
+const relation = relationSelect.value;
+const hobby = hobbySelect.value;
+createCard(name, age, relation, hobby);
+});
+// "I'm Feeling Lucky" Randomizer Logic
+luckyBtn.addEventListener('click', () => {
+const randName = luckyNames[Math.floor(Math.random() * luckyNames.length)];
+const randAge = luckyAges[Math.floor(Math.random() * luckyAges.length)];
+const randRelation = luckyRelations[Math.floor(Math.random() * luckyRelations.length)];
+const randHobby = luckyHobbies[Math.floor(Math.random() * luckyHobbies.length)];
+// Sync inputs visually on screen
+nameInput.value = randName;
+ageInput.value = randAge;
+relationSelect.value = randRelation;
+hobbySelect.value = randHobby;
+// Build the card
+createCard(randName, randAge, randRelation, randHobby);
+});

@@ -289,4 +289,43 @@
     const messagePools = {
         gaming: [
             "Happy [AGE]th Birthday to my favorite [RELATION]! May your day be filled with zero lag, epic loot drops, and high scores. You're officially leveling up today!",
-"Level [AGE] unlocked! To an incredible [RELATION]: hope your day has maximum power-ups and absolutely no boss fights. Have a legendary birthday!"],reading: ["Happy [AGE]th Birthday to a wonderful [RELATION]! May your next chapter be the absolute best one yet, complete with cozy reading corners and no plot twists.","Wishing an amazing [RELATION] a beautiful [AGE]th birthday! Here's to more books, endless coffee, and chapters full of pure joy."],traveling: ["Happy [AGE]th Birthday to my favorite globetrotting [RELATION]! May your new year around the sun bring empty airport lines, window seats, and wild adventures.","To a phenomenal [RELATION] on your [AGE]th birthday! Keep filling your passport and chasing beautiful horizons. Enjoy your special day!"],cooking: ["Happy [AGE]th Birthday to the most talented [RELATION]! May your day be seasoned with laughter, paired with sweet moments, and served with a lot of cake.","Wishing a delicious [AGE]th birthday to an incredible [RELATION]! Here's to cooking up amazing memories and savoring every single minute of this year."],fitness: ["Happy [AGE]th Birthday to my high-energy [RELATION]! Crushing life at [AGE] look easy. May your day be filled with personal records and macro-friendly cake!","To an unstoppable [RELATION] on your [AGE]th birthday! Keep lifting spirits and chasing goals. Sending you strongest wishes today!"],music: ["Happy [AGE]th Birthday to an extraordinary [RELATION]! May the soundtrack of your [AGE]s be filled with beautiful melodies, good vibes, and front-row experiences.","Wishing a rockin' [AGE]th birthday to my favorite [RELATION]! Keep living life out loud and matching your own beat."]};function generateCard() {// Fallbacksconst name = nameInput.value.trim() || "Legend";const age = ageInput.value.trim() || "21";const relation = relationSelect.value.toLowerCase();const hobby = hobbySelect.value;// Choose random message variant based on selected hobbyconst templates = messagePools[hobby];let randomTemplate = templates[Math.floor(Math.random() * templates.length)];// Process message variableslet dynamicMessage = randomTemplate.replace("[AGE]", age).replace("[RELATION]", relation);// Hide Empty State NoticeemptyState.style.display = 'none';// Unique ID for cloning capture referenceconst cardId = 'card-' + Date.now();// Create elements structures matching the "inside design layout"const cardWrapper = document.createElement('div');cardWrapper.className = 'card-wrapper';cardWrapper.id = cardId;cardWrapper.innerHTML = <div class="card-inside"> <div class="card-header-festive">🎉 Happy Birthday! 🎈</div> <div class="card-body-festive">"${dynamicMessage}"</div> <div class="card-footer-festive">— Cheers, Your Favorite App To: ${name}</div> </div> <div class="card-actions"> <button class="btn-action" onclick="triggerSingleConfetti()">✨ Blast</button> <button class="btn-action btn-download" onclick="downloadSingleCard('${cardId}')">💾 Save Image</button> </div>;// Prepend logic stack changes: Pushes newest items straight to the top of listcardContainer.insertBefore(cardWrapper, cardContainer.firstChild);// Global Confetti BursttriggerGlobalConfetti();}function triggerGlobalConfetti() {confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#ff4757', '#ffa502', '#2ed573', '#1e90ff'] });}function triggerSingleConfetti() {confetti({ particleCount: 40, spread: 40, origin: { y: 0.8 } });}function downloadSingleCard(id) {// Target only the inside visual segment rather than full UI action container rowconst targetNode = document.querySelector(#${id} .card-inside);html2canvas(targetNode, {scale: 2,backgroundColor: '#fffdf6'}).then(canvas => {const link = document.createElement('a');link.download = inside-birthday-card-${id}.png;link.href = canvas.toDataURL();link.click();});}luckyBtn.addEventListener('click', generateCard);
+            "Level [AGE] unlocked! To an incredible [RELATION]: hope your day has maximum power-ups and absolutely no boss fights. Have a legendary birthday!"],
+        reading: ["Happy [AGE]th Birthday to a wonderful [RELATION]! May your next chapter be the absolute best one yet, complete with cozy reading corners and no plot twists.",
+                  "Wishing an amazing [RELATION] a beautiful [AGE]th birthday! Here's to more books, endless coffee, and chapters full of pure joy."],
+        traveling: ["Happy [AGE]th Birthday to my favorite globetrotting [RELATION]! May your new year around the sun bring empty airport lines, window seats, and wild adventures.",
+                    "To a phenomenal [RELATION] on your [AGE]th birthday! Keep filling your passport and chasing beautiful horizons. Enjoy your special day!"],
+        cooking: ["Happy [AGE]th Birthday to the most talented [RELATION]! May your day be seasoned with laughter, paired with sweet moments, and served with a lot of cake.",
+                  "Wishing a delicious [AGE]th birthday to an incredible [RELATION]! Here's to cooking up amazing memories and savoring every single minute of this year."],
+        fitness: ["Happy [AGE]th Birthday to my high-energy [RELATION]! Crushing life at [AGE] look easy. May your day be filled with personal records and macro-friendly cake!",
+                  "To an unstoppable [RELATION] on your [AGE]th birthday! Keep lifting spirits and chasing goals. Sending you strongest wishes today!"],
+        music: ["Happy [AGE]th Birthday to an extraordinary [RELATION]! May the soundtrack of your [AGE]s be filled with beautiful melodies, good vibes, and front-row experiences.",
+                "Wishing a rockin' [AGE]th birthday to my favorite [RELATION]! Keep living life out loud and matching your own beat."]
+    };
+    function generateCard() {
+        // Fallbacks
+        const name = nameInput.value.trim() || "Legend";
+        const age = ageInput.value.trim() || "21";
+        const relation = relationSelect.value.toLowerCase();
+        const hobby = hobbySelect.value;
+        // Choose random message variant based on selected hobbyconst templates = messagePools[hobby];
+        let randomTemplate = templates[Math.floor(Math.random() * templates.length)];
+        // Process message variableslet dynamicMessage = randomTemplate.replace("[AGE]", age).replace("[RELATION]", relation);
+        // Hide Empty State NoticeemptyState.style.display = 'none';
+        // Unique ID for cloning capture referenceconst cardId = 'card-' + Date.now();
+        // Create elements structures matching the "inside design layout"const cardWrapper = document.createElement('div');cardWrapper.className = 'card-wrapper';
+        cardWrapper.id = cardId;cardWrapper.innerHTML = <div class="card-inside"> <div class="card-header-festive">🎉 Happy Birthday! 🎈</div> <div class="card-body-festive">"${dynamicMessage}"</div> <div class="card-footer-festive">— Cheers, Your Favorite App To: ${name}</div> </div> <div class="card-actions"> <button class="btn-action" onclick="triggerSingleConfetti()">✨ Blast</button> <button class="btn-action btn-download" onclick="downloadSingleCard('${cardId}')">💾 Save Image</button> </div>;
+            // Prepend logic stack changes: Pushes newest items straight to the top of listcard
+        Container.insertBefore(cardWrapper, cardContainer.firstChild);
+        // Global Confetti 
+        BursttriggerGlobalConfetti();}
+        function triggerGlobalConfetti() {confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#ff4757', '#ffa502', '#2ed573', '#1e90ff'] });}
+        function triggerSingleConfetti() {confetti({ particleCount: 40, spread: 40, origin: { y: 0.8 } });
+    }
+        function downloadSingleCard(id) 
+        {// Target only the inside visual segment rather than full UI action 
+        container rowconst targetNode = document.querySelector(#${id} .card-inside);
+        html2canvas(targetNode, {scale: 2,backgroundColor: '#fffdf6'}).then(canvas => {const link = document.createElement('a');
+        link.download = inside-birthday-card-${id}.png;
+        link.href = canvas.toDataURL();
+        link.click();});}
+        luckyBtn.addEventListener('click', generateCard);

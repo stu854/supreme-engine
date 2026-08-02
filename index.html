@@ -3,185 +3,290 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minimal Birthday Card Generator</title>
-    <!-- html2canvas library for downloading the card as an image -->
+    <title>The Ultimate Birthday Joy Machine</title>
+    <!-- html2canvas library for downloading -->
     <script src="https://cloudflare.com"></script>
-    <!-- Canvas Confetti library for the celebration effect -->
+    <!-- Canvas Confetti library for celebration -->
     <script src="https://jsdelivr.net"></script>
-
     <style>
         :root {
-            --bg-body: #f8f9fa;
-            --bg-card: #ffffff;
-            --text-main: #1a1a1a;
-            --text-muted: #666666;
-            --border: #e0e0e0;
-            --accent: #000000;
+            --bg-body: #fff5f5;
+            --accent-primary: #ff4757;
+            --accent-secondary: #ffa502;
+            --text-dark: #2f3542;
+            --border-color: #ffccd5;
         }
 
-        /* Minimalist Themes */
-        .theme-warm { --bg-card: #fffbf4; --text-main: #4a3e3d; --accent: #d97706; }
-        .theme-cool { --bg-card: #f0f7ff; --text-main: #2d3748; --accent: #2563eb; }
-        .theme-dark { --bg-card: #1a1a1a; --text-main: #f8f9fa; --accent: #ffffff; --border: #333333; }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg-body); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; transition: background 0.3s; }
-        .container { display: grid; grid-template-columns: 1fr; gap: 40px; width: 100%; max-width: 800px; }
-        @media (min-width: 768px) { .container { grid-template-columns: 1fr 1fr; align-items: start; } }
-
-        /* Left Side: Controls */
-        .controls { display: flex; flex-direction: column; gap: 20px; background: white; padding: 24px; border-radius: 12px; border: 1px solid #e0e0e0; }
-        h1 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 8px; }
-        .form-group { display: flex; flex-direction: column; gap: 6px; }
-        label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: #666; font-weight: 500; }
-        input, textarea, select { padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; background: transparent; color: inherit; outline: none; transition: border 0.2s; }
-        input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
         
-        .button-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        button { padding: 12px; border-radius: 6px; border: 1px solid var(--accent); cursor: pointer; font-weight: 500; font-size: 0.9rem; transition: all 0.2s; }
-        .btn-primary { background: var(--accent); color: var(--bg-body); }
-        .btn-primary:hover { opacity: 0.9; }
-        .btn-secondary { background: transparent; color: var(--accent); }
-        .btn-secondary:hover { background: rgba(0,0,0,0.05); }
-        .btn-lucky { grid-column: span 2; background: #10b981; color: white; border-color: #10b981; }
-        .btn-lucky:hover { background: #059669; }
+        body { 
+            background: radial-gradient(circle, #fff5f5 0%, #ffe3e3 100%); 
+            color: var(--text-dark); 
+            min-height: 100vh; 
+            padding: 30px 20px;
+        }
 
-        /* Right Side: Card Preview */
-        .preview-pane { display: flex; flex-direction: column; align-items: center; justify-content: center; position: sticky; top: 20px; }
-        .card { width: 100%; aspect-ratio: 3/4; max-width: 340px; background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 40px 30px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 20px rgba(0,0,0,0.03); transition: all 0.3s ease; position: relative; overflow: hidden; }
-        .card-header { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); }
-        .card-body { font-size: 1.6rem; font-weight: 400; line-height: 1.4; color: var(--text-main); word-wrap: break-word; }
-        .card-footer { font-size: 0.9rem; color: var(--text-muted); font-style: italic; border-top: 1px solid var(--border); padding-top: 15px; }
+        .app-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .app-header h1 {
+            font-size: 2.8rem;
+            color: var(--accent-primary);
+            text-shadow: 2px 2px 0px var(--accent-secondary);
+            margin-bottom: 5px;
+        }
+
+        .app-header p {
+            font-size: 1.1rem;
+            color: #747d8c;
+            font-weight: 500;
+        }
+
+        .container { 
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 40px; 
+            width: 100%; 
+            max-width: 1100px; 
+            margin: 0 auto;
+        }
+        
+        @media (min-width: 850px) { 
+            .container { grid-template-columns: 400px 1fr; align-items: start; } 
+        }
+
+        /* Left Control Panel */
+        .controls { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(255, 71, 87, 0.1);
+            border: 2px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        label { font-size: 0.9rem; font-weight: 700; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 0.5px; }
+        input, select { 
+            padding: 12px; 
+            border: 2px solid #f1f2f6; 
+            border-radius: 10px; 
+            font-size: 1rem; 
+            background: #fdfdfd;
+            outline: none;
+            transition: all 0.3s;
+        }
+        input:focus, select:focus { border-color: var(--accent-primary); background: white; }
+        
+        .btn-lucky { 
+            background: linear-gradient(135deg, var(--accent-primary) 0%, #ff6b81 100%);
+            color: white; 
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-lucky:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 71, 87, 0.4); }
+        .btn-lucky:active { transform: translateY(0); }
+
+        /* Right Side Display Stack */
+        .display-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            width: 100%;
+        }
+
+        .stack-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            border-bottom: 3px dashed var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Inside View Card Design */
+        .card-wrapper {
+            background: white;
+            padding: 15px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 1px solid #f1f2f6;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-inside { 
+            width: 100%; 
+            min-height: 320px;
+            background-color: #fffdf6; 
+            border: 2px solid #f39c12; 
+            border-radius: 8px; 
+            padding: 35px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            position: relative;
+            background-image: linear-gradient(rgba(243, 156, 18, 0.05) 1px, transparent 1px);
+            background-size: 100% 24px;
+            box-shadow: inset 0 0 40px rgba(243, 156, 18, 0.08);
+        }
+
+        /* Birthday Card Spine/Fold Mark */
+        .card-inside::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 20px;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.06), transparent);
+        }
+
+        .card-header-festive { 
+            font-size: 1.8rem; 
+            font-weight: 800; 
+            color: #d35400;
+            font-family: 'Georgia', serif;
+            text-align: center;
+            border-bottom: 1px dashed #f39c12;
+            padding-bottom: 10px;
+        }
+        
+        .card-body-festive { 
+            font-size: 1.25rem; 
+            font-weight: 500; 
+            line-height: 1.6; 
+            color: #2c3e50; 
+            font-family: 'Georgia', serif;
+            font-style: italic;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .card-footer-festive { 
+            font-size: 1rem; 
+            color: #7f8c8d; 
+            font-weight: bold;
+            text-align: right;
+            border-top: 1px dashed #f39c12;
+            padding-top: 10px;
+        }
+
+        .card-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-action {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 1px solid #ced6e0;
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .btn-action:hover { background: #f1f2f6; border-color: #a4b0be; }
+        .btn-download { background: #2ed573; color: white; border-color: #2ed573; }
+        .btn-download:hover { background: #26af5f; border-color: #26af5f; }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: #a4b0be;
+            border: 3px dashed var(--border-color);
+            border-radius: 20px;
+            font-size: 1.1rem;
+        }
     </style>
 </head>
 <body>
 
+<div class="app-header">
+    <h1>🎉 The Birthday Joy Machine 🎁</h1>
+    <p>Custom Inside-the-Card Generator Stack</p>
+</div>
+
 <div class="container">
     <!-- Controls Section -->
     <div class="controls">
-        <div>
-            <h1>Card Generator</h1>
-            <p style="font-size: 0.9rem; color: #666;">Create and export clean, minimal cards.</p>
-        </div>
-        
         <div class="form-group">
             <label for="nameInput">Recipient Name</label>
-            <input type="text" id="nameInput" placeholder="Alex" maxlength="25">
+            <input type="text" id="nameInput" placeholder="e.g., Sarah" maxlength="30">
         </div>
 
         <div class="form-group">
-            <label for="messageInput">Your Message</label>
-            <textarea id="messageInput" rows="4" placeholder="Wishing you a year of beautiful chaos and quiet triumphs." maxlength="150"></textarea>
+            <label for="ageInput">Age</label>
+            <input type="number" id="ageInput" placeholder="e.g., 28" min="1" max="120">
         </div>
 
         <div class="form-group">
-            <label for="themeSelect">Visual Theme</label>
-            <select id="themeSelect">
-                <option value="default">Minimal Stark</option>
-                <option value="theme-warm">Warm Oatmeal</option>
-                <option value="theme-cool">Nordic Blue</option>
-                <option value="theme-dark">Obsidian Dark</option>
+            <label for="relationSelect">Relationship</label>
+            <select id="relationSelect">
+                <option value="Friend">Friend</option>
+                <option value="Best Friend">Best Friend</option>
+                <option value="Sibling">Sibling</option>
+                <option value="Parent">Parent</option>
+                <option value="Partner">Partner / Spouse</option>
+                <option value="Coworker">Coworker</option>
             </select>
         </div>
 
-        <button class="btn-lucky" id="luckyBtn">🎲 I'm Feeling Lucky</button>
-
-        <div class="button-group">
-            <button class="btn-secondary" id="celebrateBtn">✨ Celebrate</button>
-            <button class="btn-primary" id="downloadBtn">💾 Download</button>
+        <div class="form-group">
+            <label for="hobbySelect">Primary Hobby / Passion</label>
+            <select id="hobbySelect">
+                <option value="gaming">Gaming 🎮</option>
+                <option value="reading">Reading Books 📚</option>
+                <option value="traveling">Traveling & Exploring ✈️</option>
+                <option value="cooking">Cooking & Eating 🍳</option>
+                <option value="fitness">Fitness & Gym 🏋️‍♂️</option>
+                <option value="music">Music & Concerts 🎧</option>
+            </select>
         </div>
+
+        <button class="btn-lucky" id="luckyBtn">🎲 Create Card & Stack It!</button>
     </div>
 
-    <!-- Preview Section -->
-    <div class="preview-pane">
-        <div class="card" id="birthdayCard">
-            <div class="card-header">Happy Birthday</div>
-            <div class="card-body" id="cardMessage">Wishing you a beautiful year ahead.</div>
-            <div class="card-footer" id="cardFooter">— For <span id="cardName">Someone Special</span></div>
+    <!-- Right Side Dynamic Card Stack -->
+    <div class="display-stack">
+        <div class="stack-title">Your Generated Card History</div>
+        <div id="emptyState" class="empty-state">
+            Fill out the details on the left and tap the button to stack your first card here!
         </div>
+        <div id="cardContainer" style="display: flex; flex-direction: column; gap: 30px;"></div>
     </div>
 </div>
 
 <script>
-    // Elements
     const nameInput = document.getElementById('nameInput');
-    const messageInput = document.getElementById('messageInput');
-    const themeSelect = document.getElementById('themeSelect');
-    const cardElement = document.getElementById('birthdayCard');
-    const cardName = document.getElementById('cardName');
-    const cardMessage = document.getElementById('cardMessage');
-    
-    const downloadBtn = document.getElementById('downloadBtn');
-    const celebrateBtn = document.getElementById('celebrateBtn');
+    const ageInput = document.getElementById('ageInput');
+    const relationSelect = document.getElementById('relationSelect');
+    const hobbySelect = document.getElementById('hobbySelect');
     const luckyBtn = document.getElementById('luckyBtn');
+    const cardContainer = document.getElementById('cardContainer');
+    const emptyState = document.getElementById('emptyState');
 
-    // "I'm Feeling Lucky" Datapool
-    const luckyNames = ["Adventurer", "My Human", "Partner in Crime", "Rockstar", "Legend", "Kind Soul"];
-    const luckyMessages = [
-        "May your day be as wonderfully unstructured and joyful as possible.",
-        "To another year of making mistakes, learning things, and breaking rules.",
-        "Less perfection, more authenticity. Have an incredible year ahead.",
-        "Growing older is mandatory. Growing up is entirely optional.",
-        "Cheers to a clean slate, fresh starts, and the beautiful unknown ahead."
-    ];
-    const luckyThemes = ["default", "theme-warm", "theme-cool", "theme-dark"];
-
-    // Real-time Update Event Listeners
-    nameInput.addEventListener('input', (e) => {
-        cardName.textContent = e.target.value.trim() || "Someone Special";
-    });
-
-    messageInput.addEventListener('input', (e) => {
-        cardMessage.textContent = e.target.value.trim() || "Wishing you a beautiful year ahead.";
-    });
-
-    themeSelect.addEventListener('change', (e) => {
-        cardElement.className = 'card ' + e.target.value;
-    });
-
-    // Action: Confetti Burst
-    function triggerConfetti() {
-        confetti({
-            particleCount: 80,
-            spread: 60,
-            origin: { y: 0.6 },
-            colors: ['#000000', '#666666', '#d97706', '#2563eb', '#10b981']
-        });
-    }
-    celebrateBtn.addEventListener('click', triggerConfetti);
-
-    // Action: I'm Feeling Lucky
-    luckyBtn.addEventListener('click', () => {
-        const randName = luckyNames[Math.floor(Math.random() * luckyNames.length)];
-        const randMsg = luckyMessages[Math.floor(Math.random() * luckyMessages.length)];
-        const randTheme = luckyThemes[Math.floor(Math.random() * luckyThemes.length)];
-
-        // Sync inputs
-        nameInput.value = randName;
-        messageInput.value = randMsg;
-        themeSelect.value = randTheme;
-
-        // Sync card layout
-        cardName.textContent = randName;
-        cardMessage.textContent = randMsg;
-        cardElement.className = 'card ' + randTheme;
-
-        triggerConfetti();
-    });
-
-    // Action: Download Card
-    downloadBtn.addEventListener('click', () => {
-        html2canvas(cardElement, {
-            scale: 2, // Enhances quality for saving
-            backgroundColor: null
-        }).then(canvas => {
-            const link = document.createElement('a');
-            link.download = `birthday-card-${nameInput.value || 'special'}.png`;
-            link.href = canvas.toDataURL();
-            link.click();
-        });
-    });
-</script>
-
-</body>
-</html>
+    // Fun messages map sorted dynamically by hobby
+    const messagePools = {
+        gaming: [
+            "Happy [AGE]th Birthday to my favorite [RELATION]! May your day be filled with zero lag, epic loot drops, and high scores. You're officially leveling up today!",
+"Level [AGE] unlocked! To an incredible [RELATION]: hope your day has maximum power-ups and absolutely no boss fights. Have a legendary birthday!"],reading: ["Happy [AGE]th Birthday to a wonderful [RELATION]! May your next chapter be the absolute best one yet, complete with cozy reading corners and no plot twists.","Wishing an amazing [RELATION] a beautiful [AGE]th birthday! Here's to more books, endless coffee, and chapters full of pure joy."],traveling: ["Happy [AGE]th Birthday to my favorite globetrotting [RELATION]! May your new year around the sun bring empty airport lines, window seats, and wild adventures.","To a phenomenal [RELATION] on your [AGE]th birthday! Keep filling your passport and chasing beautiful horizons. Enjoy your special day!"],cooking: ["Happy [AGE]th Birthday to the most talented [RELATION]! May your day be seasoned with laughter, paired with sweet moments, and served with a lot of cake.","Wishing a delicious [AGE]th birthday to an incredible [RELATION]! Here's to cooking up amazing memories and savoring every single minute of this year."],fitness: ["Happy [AGE]th Birthday to my high-energy [RELATION]! Crushing life at [AGE] look easy. May your day be filled with personal records and macro-friendly cake!","To an unstoppable [RELATION] on your [AGE]th birthday! Keep lifting spirits and chasing goals. Sending you strongest wishes today!"],music: ["Happy [AGE]th Birthday to an extraordinary [RELATION]! May the soundtrack of your [AGE]s be filled with beautiful melodies, good vibes, and front-row experiences.","Wishing a rockin' [AGE]th birthday to my favorite [RELATION]! Keep living life out loud and matching your own beat."]};function generateCard() {// Fallbacksconst name = nameInput.value.trim() || "Legend";const age = ageInput.value.trim() || "21";const relation = relationSelect.value.toLowerCase();const hobby = hobbySelect.value;// Choose random message variant based on selected hobbyconst templates = messagePools[hobby];let randomTemplate = templates[Math.floor(Math.random() * templates.length)];// Process message variableslet dynamicMessage = randomTemplate.replace("[AGE]", age).replace("[RELATION]", relation);// Hide Empty State NoticeemptyState.style.display = 'none';// Unique ID for cloning capture referenceconst cardId = 'card-' + Date.now();// Create elements structures matching the "inside design layout"const cardWrapper = document.createElement('div');cardWrapper.className = 'card-wrapper';cardWrapper.id = cardId;cardWrapper.innerHTML = <div class="card-inside"> <div class="card-header-festive">🎉 Happy Birthday! 🎈</div> <div class="card-body-festive">"${dynamicMessage}"</div> <div class="card-footer-festive">— Cheers, Your Favorite App To: ${name}</div> </div> <div class="card-actions"> <button class="btn-action" onclick="triggerSingleConfetti()">✨ Blast</button> <button class="btn-action btn-download" onclick="downloadSingleCard('${cardId}')">💾 Save Image</button> </div>;// Prepend logic stack changes: Pushes newest items straight to the top of listcardContainer.insertBefore(cardWrapper, cardContainer.firstChild);// Global Confetti BursttriggerGlobalConfetti();}function triggerGlobalConfetti() {confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#ff4757', '#ffa502', '#2ed573', '#1e90ff'] });}function triggerSingleConfetti() {confetti({ particleCount: 40, spread: 40, origin: { y: 0.8 } });}function downloadSingleCard(id) {// Target only the inside visual segment rather than full UI action container rowconst targetNode = document.querySelector(#${id} .card-inside);html2canvas(targetNode, {scale: 2,backgroundColor: '#fffdf6'}).then(canvas => {const link = document.createElement('a');link.download = inside-birthday-card-${id}.png;link.href = canvas.toDataURL();link.click();});}luckyBtn.addEventListener('click', generateCard);

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal Birthday Card Generator</title>
+    <!-- html2canvas library for downloading the card as an image -->
+    <script src="https://cloudflare.com"></script>
+    <!-- Canvas Confetti library for the celebration effect -->
+    <script src="https://jsdelivr.net"></script>
+    <style>
+        :root {
+            --bg-body: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-main: #1a1a1a;
+            --text-muted: #666666;
+            --border: #e0e0e0;
+            --accent: #000000;
+        }
+
+        /* Minimalist Themes */
+        .theme-warm { --bg-card: #fffbf4; --text-main: #4a3e3d; --accent: #d97706; }
+        .theme-cool { --bg-card: #f0f7ff; --text-main: #2d3748; --accent: #2563eb; }
+        .theme-dark { --bg-card: #1a1a1a; --text-main: #f8f9fa; --accent: #ffffff; --border: #333333; }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; transition: background 0.3s; }
+        .container { display: grid; grid-template-columns: 1fr; gap: 40px; width: 100%; max-width: 800px; }
+        @media (min-width: 768px) { .container { grid-template-columns: 1fr 1fr; align-items: start; } }
+
+        /* Left Side: Controls */
+        .controls { display: flex; flex-direction: column; gap: 20px; background: white; padding: 24px; border-radius: 12px; border: 1px solid #e0e0e0; }
+        h1 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 8px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: #666; font-weight: 500; }
+        input, textarea, select { padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; background: transparent; color: inherit; outline: none; transition: border 0.2s; }
+        input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+        
+        .button-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        button { padding: 12px; border-radius: 6px; border: 1px solid var(--accent); cursor: pointer; font-weight: 500; font-size: 0.9rem; transition: all 0.2s; }
+        .btn-primary { background: var(--accent); color: var(--bg-body); }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-secondary { background: transparent; color: var(--accent); }
+        .btn-secondary:hover { background: rgba(0,0,0,0.05); }
+        .btn-lucky { grid-column: span 2; background: #10b981; color: white; border-color: #10b981; }
+        .btn-lucky:hover { background: #059669; }
+
+        /* Right Side: Card Preview */
+        .preview-pane { display: flex; flex-direction: column; align-items: center; justify-content: center; position: sticky; top: 20px; }
+        .card { width: 100%; aspect-ratio: 3/4; max-width: 340px; background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 40px 30px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 20px rgba(0,0,0,0.03); transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .card-header { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); }
+        .card-body { font-size: 1.6rem; font-weight: 400; line-height: 1.4; color: var(--text-main); word-wrap: break-word; }
+        .card-footer { font-size: 0.9rem; color: var(--text-muted); font-style: italic; border-top: 1px solid var(--border); padding-top: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Controls Section -->
+    <div class="controls">
+        <div>
+            <h1>Card Generator</h1>
+            <p style="font-size: 0.9rem; color: #666;">Create and export clean, minimal cards.</p>
+        </div>
+        
+        <div class="form-group">
+            <label for="nameInput">Recipient Name</label>
+            <input type="text" id="nameInput" placeholder="Alex" maxlength="25">
+        </div>
+
+        <div class="form-group">
+            <label for="messageInput">Your Message</label>
+            <textarea id="messageInput" rows="4" placeholder="Wishing you a year of beautiful chaos and quiet triumphs." maxlength="150"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="themeSelect">Visual Theme</label>
+            <select id="themeSelect">
+                <option value="default">Minimal Stark</option>
+                <option value="theme-warm">Warm Oatmeal</option>
+                <option value="theme-cool">Nordic Blue</option>
+                <option value="theme-dark">Obsidian Dark</option>
+            </select>
+        </div>
+
+        <button class="btn-lucky" id="luckyBtn">🎲 I'm Feeling Lucky</button>
+
+        <div class="button-group">
+            <button class="btn-secondary" id="celebrateBtn">✨ Celebrate</button>
+            <button class="btn-primary" id="downloadBtn">💾 Download</button>
+        </div>
+    </div>
+
+    <!-- Preview Section -->
+    <div class="preview-pane">
+        <div class="card" id="birthdayCard">
+            <div class="card-header">Happy Birthday</div>
+            <div class="card-body" id="cardMessage">Wishing you a beautiful year ahead.</div>
+            <div class="card-footer" id="cardFooter">— For <span id="cardName">Someone Special</span></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Elements
+    const nameInput = document.getElementById('nameInput');
+    const messageInput = document.getElementById('messageInput');
+    const themeSelect = document.getElementById('themeSelect');
+    const cardElement = document.getElementById('birthdayCard');
+    const cardName = document.getElementById('cardName');
+    const cardMessage = document.getElementById('cardMessage');
+    
+    const downloadBtn = document.getElementById('downloadBtn');
+    const celebrateBtn = document.getElementById('celebrateBtn');
+    const luckyBtn = document.getElementById('luckyBtn');
+
+    // "I'm Feeling Lucky" Datapool
+    const luckyNames = ["Adventurer", "My Human", "Partner in Crime", "Rockstar", "Legend", "Kind Soul"];
+    const luckyMessages = [
+        "May your day be as wonderfully unstructured and joyful as possible.",
+        "To another year of making mistakes, learning things, and breaking rules.",
+        "Less perfection, more authenticity. Have an incredible year ahead.",
+        "Growing older is mandatory. Growing up is entirely optional.",
+        "Cheers to a clean slate, fresh starts, and the beautiful unknown ahead."
+    ];
+    const luckyThemes = ["default", "theme-warm", "theme-cool", "theme-dark"];
+
+    // Real-time Update Event Listeners
+    nameInput.addEventListener('input', (e) => {
+        cardName.textContent = e.target.value.trim() || "Someone Special";
+    });
+
+    messageInput.addEventListener('input', (e) => {
+        cardMessage.textContent = e.target.value.trim() || "Wishing you a beautiful year ahead.";
+    });
+
+    themeSelect.addEventListener('change', (e) => {
+        cardElement.className = 'card ' + e.target.value;
+    });
+
+    // Action: Confetti Burst
+    function triggerConfetti() {
+        confetti({
+            particleCount: 80,
+            spread: 60,
+            origin: { y: 0.6 },
+            colors: ['#000000', '#666666', '#d97706', '#2563eb', '#10b981']
+        });
+    }
+    celebrateBtn.addEventListener('click', triggerConfetti);
+
+    // Action: I'm Feeling Lucky
+    luckyBtn.addEventListener('click', () => {
+        const randName = luckyNames[Math.floor(Math.random() * luckyNames.length)];
+        const randMsg = luckyMessages[Math.floor(Math.random() * luckyMessages.length)];
+        const randTheme = luckyThemes[Math.floor(Math.random() * luckyThemes.length)];
+
+        // Sync inputs
+        nameInput.value = randName;
+        messageInput.value = randMsg;
+        themeSelect.value = randTheme;
+
+        // Sync card layout
+        cardName.textContent = randName;
+        cardMessage.textContent = randMsg;
+        cardElement.className = 'card ' + randTheme;
+
+        triggerConfetti();
+    });
+
+    // Action: Download Card
+    downloadBtn.addEventListener('click', () => {
+        html2canvas(cardElement, {
+            scale: 2, // Enhances quality for saving
+            backgroundColor: null
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `birthday-card-${nameInput.value || 'special'}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+    });
+</script>
+
+</body>
+</html>

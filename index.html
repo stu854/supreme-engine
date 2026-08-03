@@ -1,129 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Ultimate Birthday Joy Machine</title>
+    <!-- Correct CDN links -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>    <style>
+        :root {
+            --bg-body: #fff5f5;
+            --accent-primary: #ff4757;
+            --accent-secondary: #ffa502;
+            --text-dark: #2f3542;
+            --border-color: #ffccd5;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        
+        body { 
+            background: radial-gradient(circle, #fff5f5 0%, #ffe3e3 100%); 
+            color: var(--text-dark); 
+            min-height: 100vh; 
+            padding: 30px 20px;
+        }
+
+        .app-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .app-header h1 {
+            font-size: 2.8rem;
+            color: var(--accent-primary);
+            text-shadow: 2px 2px 0px var(--accent-secondary);
+            margin-bottom: 5px;
+        }
+
+        .app-header p {
+            font-size: 1.1rem;
+            color: #747d8c;
+            font-weight: 500;
+        }
+
+        .container { 
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 40px; 
+            width: 100%; 
+            max-width: 1100px; 
+            margin: 0 auto;
+        }
+        
+        @media (min-width: 850px) { 
+            .container { grid-template-columns: 400px 1fr; align-items: start; } 
+        }
+
+        /* Left Control Panel */
+        .controls { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(255, 71, 87, 0.1);
+            border: 2px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        label { font-size: 0.9rem; font-weight: 700; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 0.5px; }
+        input, select { 
+            padding: 12px; 
+            border: 2px solid #f1f2f6; 
+            border-radius: 10px; 
+            font-size: 1rem; 
+            background: #fdfdfd;
+            outline: none;
+            transition: all 0.3s;
+        }
+        input:focus, select:focus { border-color: var(--accent-primary); background: white; }
+        
+        button {
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+        }
+
+        .btn-generate {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+        .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); }
+
+        .btn-lucky { 
+            background: linear-gradient(135deg, var(--accent-primary) 0%, #ff6b81 100%);
+            color: white; 
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+        }
+        .btn-lucky:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 71, 87, 0.4); }
+        button:active { transform: translateY(0); }
+
+        /* Right Side Display Stack */
+        .display-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            width: 100%;
+        }
+
+        .stack-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            border-bottom: 3px dashed var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Inside View Card Design */
+        .card-wrapper {
+            background: white;
+            padding: 15px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 1px solid #f1f2f6;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-inside { 
+            width: 100%; 
+            min-height: 320px;
+            background-color: #fffdf6; 
+            border: 2px solid #f39c12; 
+            border-radius: 8px; 
+            padding: 35px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            position: relative;
+            background-image: linear-gradient(rgba(243, 156, 18, 0.05) 1px, transparent 1px);
+            background-size: 100% 24px;
+            box-shadow: inset 0 0 40px rgba(243, 156, 18, 0.08);
+        }
+
+        /* Birthday Card Spine/Fold Mark */
+        .card-inside::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 20px;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.06), transparent);
+        }
+
+        .card-header-festive { 
+            font-size: 1.8rem; 
+            font-weight: 800; 
+            color: #d35400;
+            font-family: 'Georgia', serif;
+            text-align: center;
+            border-bottom: 1px dashed #f39c12;
+            padding-bottom: 10px;
+        }
+        
+        .card-body-festive { 
+            font-size: 1.25rem; 
+            font-weight: 500; 
+            line-height: 1.6; 
+            color: #2c3e50; 
+            font-family: 'Georgia', serif;
+            font-style: italic;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .card-footer-festive { 
+            font-size: 1rem; 
+            color: #7f8c8d; 
+            font-weight: bold;
+            text-align: right;
+            border-top: 1px dashed #f39c12;
+            padding-top: 10px;
+        }
+
+        .card-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-action {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 1px solid #ced6e0;
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .btn-action:hover { background: #f1f2f6; border-color: #a4b0be; }
+        .btn-download { background: #2ed573; color: white; border-color: #2ed573; }
+        .btn-download:hover { background: #26af5f; border-color: #26af5f; }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: #a4b0be;
+            border: 3px dashed var(--border-color);
+            border-radius: 20px;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-header">
+    <h1>🎉 The Birthday Joy Machine 🎁</h1>
+    <p>Custom Inside-the-Card Generator Stack</p>
+</div>
+
+<div class="container">
+    <!-- Controls Section -->
+    <div class="controls">
+        <div class="form-group">
+            <label for="nameInput">Recipient Name</label>
+            <input type="text" id="nameInput" placeholder="e.g., Sarah" maxlength="30">
+        </div>
+
+        <div class="form-group">
+            <label for="ageInput">Age</label>
+            <input type="number" id="ageInput" placeholder="e.g., 28" min="1" max="120">
+        </div>
+
+        <div class="form-group">
+            <label for="relationSelect">Relationship</label>
+            <select id="relationSelect">
+                <option value="Friend">Friend</option>
+                <option value="Best Friend">Best Friend</option>
+                <option value="Sibling">Sibling</option>
+                <option value="Parent">Parent</option>
+                <option value="Partner">Partner / Spouse</option>
+                <option value="Coworker">Coworker</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="hobbySelect">Primary Hobby / Passion</label>
+            <select id="hobbySelect">
+                <option value="gaming">Gaming 🎮</option>
+                <option value="reading">Reading Books 📚</option>
+                <option value="traveling">Traveling & Exploring ✈️</option>
+                <option value="cooking">Cooking & Eating 🍳</option>
+                <option value="fitness">Fitness & Gym 🏋️‍♂️</option>
+                <option value="music">Music & Concerts 🎧</option>
+            </select>
+        </div>
+
+        <button class="btn-generate" id="generateBtn">🔨 Generate Custom Card</button>
+        <button class="btn-lucky" id="luckyBtn">🎲 I'm Feeling Lucky</button>
+    </div>
+
+    <!-- Right Side Dynamic Card Stack -->
+    <div class="display-stack">
+        <div class="stack-title">Your Generated Card History</div>
+        <div id="emptyState" class="empty-state">
+            Fill out the details on the left and tap either button to stack your first card here!
+        </div>
+        <div id="cardContainer" style="display: flex; flex-direction: column; gap: 30px;"></div>
+    </div>
+</div>
+
 <script>
-  const nameInput = document.getElementById('nameInput');
-  const ageInput = document.getElementById('ageInput');
-  const relationSelect = document.getElementById('relationSelect');
-  const hobbySelect = document.getElementById('hobbySelect');
+    const nameInput = document.getElementById('nameInput');
+    const ageInput = document.getElementById('ageInput');
+    const relationSelect = document.getElementById('relationSelect');
+    const hobbySelect = document.getElementById('hobbySelect');
 
-  const generateBtn = document.getElementById('generateBtn');
-  const luckyBtn = document.getElementById('luckyBtn');
-  const cardContainer = document.getElementById('cardContainer');
-  const emptyState = document.getElementById('emptyState');
-
-  // "I'm Feeling Lucky" Datapools
-  const luckyNames = ["Alex", "Jordan", "Taylor", "Sam", "Chris", "Morgan"];
-  const luckyAges = ["21", "25", "30", "35", "40", "50"];
-  const luckyRelations = ["Friend", "Best Friend", "Sibling", "Parent", "Partner", "Coworker"];
-  const luckyHobbies = ["gaming", "reading", "traveling", "cooking", "fitness", "music"];
-
-  // Fun messages map sorted dynamically by hobby
-  const messagePools = {
+    const generateBtn = document.getElementById('generateBtn');
+    const luckyBtn = document.getElementById('luckyBtn');
+    const cardContainer = document.getElementById('cardContainer');
+    const emptyState = document.getElementById('emptyState');
+    // "I'm Feeling Lucky" Datapools
+    const luckyNames = ["Alex", "Jordan", "Taylor", "Sam", "Chris", "Morgan"];
+    const luckyAges = ["21", "25", "30", "35", "40", "50"];
+    const luckyRelations = ["Friend", "Best Friend", "Sibling", "Parent", "Partner", "Coworker"];
+    const luckyHobbies = ["gaming", "reading", "traveling", "cooking", "fitness", "music"];
+    // Fun messages map sorted dynamically by hobby
+    const messagePools = {
     gaming: [
-      "Happy [AGE]th Birthday to my favorite [RELATION]! May your day be filled with zero lag, epic loot drops, and high scores. You're officially leveling up today!",
-      "Level [AGE] unlocked! To an incredible [RELATION]: hope your day has maximum power-ups and absolutely no boss fights. Have a legendary birthday!"
+    "Happy [AGE]th Birthday to my favorite [RELATION]! May your day be filled with zero lag, epic loot drops, and high scores. You're officially leveling up today!",
+    "Level [AGE] unlocked! To an incredible [RELATION]: hope your day has maximum power-ups and absolutely no boss fights. Have a legendary birthday!"
     ],
     reading: [
-      "Happy [AGE]th Birthday to a wonderful [RELATION]! May your next chapter be the absolute best one yet, complete with cozy reading corners and no plot twists.",
-      "Wishing an amazing [RELATION] a beautiful [AGE]th birthday! Here's to more books, endless coffee, and chapters full of pure joy."
+    "Happy [AGE]th Birthday to a wonderful [RELATION]! May your next chapter be the absolute best one yet, complete with cozy reading corners and no plot twists.",
+    "Wishing an amazing [RELATION] a beautiful [AGE]th birthday! Here's to more books, endless coffee, and chapters full of pure joy."
     ],
     traveling: [
-      "Happy [AGE]th Birthday to my favorite globetrotting [RELATION]! May your new year around the sun bring empty airport lines, window seats, and wild adventures.",
-      "To a phenomenal [RELATION] on your [AGE]th birthday! Keep filling your passport and chasing beautiful horizons. Enjoy your special day!"
+    "Happy [AGE]th Birthday to my favorite globetrotting [RELATION]! May your new year around the sun bring empty airport lines, window seats, and wild adventures.",
+    "To a phenomenal [RELATION] on your [AGE]th birthday! Keep filling your passport and chasing beautiful horizons. Enjoy your special day!"
     ],
     cooking: [
-      "Happy [AGE]th Birthday to the most talented [RELATION]! May your day be seasoned with laughter, paired with sweet moments, and served with a lot of cake.",
-      "Wishing a delicious [AGE]th birthday to an incredible [RELATION]! Here's to cooking up amazing memories and savoring every single minute of this year."
+    "Happy [AGE]th Birthday to the most talented [RELATION]! May your day be seasoned with laughter, paired with sweet moments, and served with a lot of cake.",
+    "Wishing a delicious [AGE]th birthday to an incredible [RELATION]! Here's to cooking up amazing memories and savoring every single minute of this year."
     ],
     fitness: [
-      "Happy [AGE]th Birthday to my high-energy [RELATION]! Crushing life at [AGE] looks easy. May your day be filled with personal records and macro-friendly cake!",
-      "To an unstoppable [RELATION] on your [AGE]th birthday! Keep lifting spirits and chasing goals. Sending you strongest wishes today!"
+    "Happy [AGE]th Birthday to my high-energy [RELATION]! Crushing life at [AGE] looks easy. May your day be filled with personal records and macro-friendly cake!",
+    "To an unstoppable [RELATION] on your [AGE]th birthday! Keep lifting spirits and chasing goals. Sending you strongest wishes today!"
     ],
     music: [
-      "Happy [AGE]th Birthday to an extraordinary [RELATION]! May the soundtrack of your [AGE]s be filled with beautiful melodies, good vibes, and front-row experiences.",
-      "Wishing a rockin' [AGE]th birthday to my favorite [RELATION]! Keep living life out loud and matching your own beat."
+    "Happy [AGE]th Birthday to an extraordinary [RELATION]! May the soundtrack of your [AGE]s be filled with beautiful melodies, good vibes, and front-row experiences.",
+    "Wishing a rockin' [AGE]th birthday to my favorite [RELATION]! Keep living life out loud and matching your own beat."
     ]
-  };
-
-  function createCard(name, age, relation, hobby) {
-    const templates = messagePools[hobby] || ["Happy [AGE]th Birthday, dear [RELATION]!"];
-    const randomTemplate = templates[Math.floor(Math.random() * templates.length)];
-
-    const dynamicMessage = randomTemplate
-      .replace(/\[AGE\]/g, age)
-      .replace(/\[RELATION\]/g, relation.toLowerCase());
-
+    };
+    function createCard(name, age, relation, hobby) {
+    // Choose random message variant based on selected hobby
+    const templates = messagePools[hobby];
+    let randomTemplate = templates[Math.floor(Math.random() * templates.length)];
+    // Process message variables
+    let dynamicMessage = randomTemplate
+    .replace("[AGE]", age)
+    .replace("[RELATION]", relation.toLowerCase());
     // Hide Empty State Notice
     emptyState.style.display = 'none';
-
     // Unique ID for cloning capture reference
     const cardId = 'card-' + Date.now();
-
     // Create element structure
     const cardWrapper = document.createElement('div');
     cardWrapper.className = 'card-wrapper';
     cardWrapper.id = cardId;
-
-    cardWrapper.innerHTML = `
-      <div class="card-inside">
-        <div class="card-header-festive">🎉 Happy Birthday! 🎈</div>
-        <div class="card-body-festive">${dynamicMessage}</div>
-        <div class="card-footer-festive">— ${name}</div>
-      </div>
-      <div class="card-actions">
-        <button class="btn-action" onclick="triggerSingleConfetti()">Celebrate</button>
-        <button class="btn-action btn-download" onclick="downloadSingleCard('${cardId}')">Download</button>
-      </div>
-    `;
-
+    cardWrapper.innerHTML = <div class="card-inside"> <div class="card-header-festive">🎉 Happy Birthday! 🎈</div> <div class="card-body-festive">"${dynamicMessage}"</div> <div class="card-footer-festive">— For my ${relation}, ${name}</div> </div> <div class="card-actions"> <button class="btn-action" onclick="triggerSingleConfetti()">✨ Blast</button> <button class="btn-action btn-download" onclick="downloadSingleCard('${cardId}')">💾 Save Image</button> </div>;
     // Pushes newest items straight to the top of the list
     cardContainer.insertBefore(cardWrapper, cardContainer.firstChild);
-
     // Global Confetti Burst
     triggerGlobalConfetti();
-  }
-
-  function triggerGlobalConfetti() {
-    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#ff4757', '#ffa502', '#2ed573', '#1e90ff'] });
-  }
-
-  // Attached globally so inline HTML onclick handlers can find it
-  window.triggerSingleConfetti = function() {
-    confetti({ particleCount: 40, spread: 40, origin: { y: 0.8 } });
-  }
-
-  window.downloadSingleCard = function(id) {
-    const targetNode = document.querySelector(`#${id} .card-inside`);
-    if (!targetNode) {
-      console.warn('downloadSingleCard: target not found for', id);
-      return;
     }
-
-    html2canvas(targetNode, {
+    function triggerGlobalConfetti() {
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#ff4757', '#ffa502', '#2ed573', '#1e90ff'] });
+    }
+    // Attached globally so inline HTML onclick handlers can find it
+    window.triggerSingleConfetti = function() {
+      confetti({ particleCount: 40, spread: 40, origin: { y: 0.8 } });
+    }
+    window.downloadSingleCard = function(id) {
+      const targetNode = document.querySelector(#${id} .card-inside);
+      html2canvas(targetNode, {
       scale: 2,
       backgroundColor: '#fffdf6'
-    }).then(canvas => {
+      }).then(canvas => {
       const link = document.createElement('a');
-      link.download = `inside-birthday-card-${id}.png`;
-      link.href = canvas.toDataURL('image/png');
-      // Append to body in case some browsers require it
-      document.body.appendChild(link);
+      link.download = inside-birthday-card-${id}.png;
+      link.href = canvas.toDataURL();
       link.click();
-      link.remove();
-    }).catch(err => {
-      console.error('html2canvas error', err);
     });
-  }
-
-  // Normal Form Generation Logic
-  generateBtn.addEventListener('click', () => {
+    
+    // Normal Form Generation Logic
+    generateBtn.addEventListener('click', () => {
     const name = nameInput.value.trim() || "Legend";
     const age = ageInput.value.trim() || "21";
     const relation = relationSelect.value;
     const hobby = hobbySelect.value;
     createCard(name, age, relation, hobby);
-  });
-
-  // "I'm Feeling Lucky" Randomizer Logic
-  luckyBtn.addEventListener('click', () => {
+    });
+    // "I'm Feeling Lucky" Randomizer Logic
+    luckyBtn.addEventListener('click', () => {
     const randName = luckyNames[Math.floor(Math.random() * luckyNames.length)];
     const randAge = luckyAges[Math.floor(Math.random() * luckyAges.length)];
     const randRelation = luckyRelations[Math.floor(Math.random() * luckyRelations.length)];
@@ -135,5 +389,5 @@
     hobbySelect.value = randHobby;
     // Build the card
     createCard(randName, randAge, randRelation, randHobby);
-  });
+    });
 </script>
